@@ -4,7 +4,8 @@ import { routes } from "./routes/routes";
 import SuspenseLoader from './components/common/SuspenseLoader';
 import DataProvider from './context/DataProvider';
 import { EmailProvider } from './context/EmailContext';
-import { EventProvider } from './context/EventsContext'; // Import EventProvider
+import { EventProvider } from './context/EventsContext'; 
+import { LoginResultProvider } from './context/LoginResultContext'; // Import LoginResultProvider
 
 const ErrorComponent = lazy(() => import('./components/common/ErrorComponent'));
 
@@ -39,8 +40,10 @@ function App() {
     <Suspense fallback={<SuspenseLoader />}>
       <DataProvider>
         <EmailProvider >
-          <EventProvider> {/* Include EventProvider */}
-            <RouterProvider router={router} />
+          <EventProvider> 
+            <LoginResultProvider> {/* Include LoginResultProvider */}
+              <RouterProvider router={router} />
+            </LoginResultProvider>
           </EventProvider>
         </EmailProvider>
       </DataProvider>

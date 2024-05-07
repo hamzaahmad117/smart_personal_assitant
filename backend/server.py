@@ -45,7 +45,7 @@ def send_email():
     gmail = Gmail()
     params = {
   "to": data['to'],
-  "sender": "hamza.ahmad2601@gmail.com",
+  "sender": data['from'],
   "subject": data['subject'],
   "msg_html": "<p>"+data['body']+"</p>",
   "msg_plain": data['body'],
@@ -71,55 +71,10 @@ def calendar_entry():
     email = request.json
     print(email)
     response = extractEvent(email['email'])
-    # print(emails['emails'])
-    # eventList = extractEvent(emails['emails'])
-#     eventList = [
-#     {
-#         "summary": "Meeting",
-#         "location": "Conference Room",
-#         "description": "Monthly team meeting",
-#         "colorId": 5,
-#         "start": {
-#             "dateTime": "2024-05-10T10:30:00",
-#             "timeZone": "Asia/Karachi"
-#         },
-#         "end": {
-#             "dateTime": "2024-05-10T11:30:00",
-#             "timeZone": "Asia/Karachi"
-#         }
-#     },
-#     {
-#         "summary": "Lunch",
-#         "location": "Cafeteria",
-#         "description": "Team lunch",
-#         "colorId": 6,
-#         "start": {
-#             "dateTime": "2024-05-10T12:00:00",
-#             "timeZone": "Asia/Karachi"
-#         },
-#         "end": {
-#             "dateTime": "2024-05-10T13:00:00",
-#             "timeZone": "Asia/Karachi"
-#         }
-#     },
-#     {
-#         "summary": "Product Introduction Meeting",
-#         "location": "Online",
-#         "description": "Introduction to new products",
-#         "colorId": 7,
-#         "start": {
-#             "dateTime": "2024-05-15T09:30:00",
-#             "timeZone": "Asia/Karachi"
-#         },
-#         "end": {
-#             "dateTime": "2024-05-15T10:30:00",
-#             "timeZone": "Asia/Karachi"
-#         }
-#     },
-#     # Add more dummy events as needed
-# ]
-
-    # print(eventList)
+    print(response)
+    if response == None:
+        print('response is none.')
+        return 'None'
     return response
 
 @app.route('/get-emails', methods=['GET'])

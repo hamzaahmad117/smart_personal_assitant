@@ -111,9 +111,15 @@ const ViewEmail = () => {
                 email: email.body
             });
             // Update the event state by dispatching an action
-            dispatch({ type: 'ADD_EVENT', payload: response.data });
             console.log(response.data);
-            alert('A new Calendar Entry was Created.')
+            if (response.data !== 'None') {
+                dispatch({ type: 'ADD_EVENT', payload: response.data });
+                alert('A new Calendar Entry was Created.')
+            } else {
+                alert('NO Calendar Event was detected.')
+
+            }
+            
         } catch (error) {
             console.error('Error creating calendar entry:', error);
         } finally {

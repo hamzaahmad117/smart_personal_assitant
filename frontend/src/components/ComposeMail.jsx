@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Dialog, styled, Typography, Box, InputBase, TextField, Button, CircularProgress } from '@mui/material'; 
-import { Close, DeleteOutline, Reply } from '@mui/icons-material';
+import { Close, DeleteOutline} from '@mui/icons-material';
 import axios from 'axios';
+import { useLoginResult } from '../context/LoginResultContext'; // Import useLoginResult hook
 
 const dialogStyle = {
     height: '90%',
@@ -55,10 +56,13 @@ const PlaceholderBox = styled(Box)`
 `;
 
 const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
+    const { loginResult } = useLoginResult(); // Get loginResult from context
+
     const [data, setData] = useState({
+        from: loginResult ? loginResult[0] : '', // Set from field to loginResult[0] if available
         to: recipient || '',
         subject: '',
-        body: '', // Initialize body with an empty string
+        body: '',
     });
     const [error, setError] = useState('');
 
@@ -66,7 +70,7 @@ const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
         if (response) {
             setData({
                 ...data,
-                body: response || '', // Set the response in the email body field
+                body: response || '',
             });
         }
     }, [response]);
@@ -77,7 +81,7 @@ const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
 
     const sendEmail = async (e) => {
         e.preventDefault();
-
+        console.log(loginResult)
         if (!data.to || !data.subject || !data.body) {
             setError('Recipients, Subject, or Email Body cannot be empty.');
             return;
@@ -90,7 +94,12 @@ const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
             console.log('Response from Flask:', response.data);
 
             setOpenDrawer(false);
-            setData({});
+            setData({ // Only clear the fields that need to be cleared
+                ...data,
+                to: '',
+                subject: '',
+                body: '',
+            });
         } catch (error) {
             console.error('Error sending email:', error);
         }

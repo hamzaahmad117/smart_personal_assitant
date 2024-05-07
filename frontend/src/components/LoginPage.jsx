@@ -3,37 +3,35 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { useNavigate } from 'react-router-dom';
 import { routes } from '../routes/routes';
+import { useLoginResult } from '../context/LoginResultContext';
 
 export default function LoginPage() {
-    const [loggedIn, setLoggedIn] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [message, setMessage] = React.useState('');
+    const { loginResult, setLoginResult } = useLoginResult();
     const navigate = useNavigate();
 
     const buttonStyle = {
         color: 'white',
         backgroundColor: '#1976D2',
-        borderRadius: '20px', // Adjust the border radius as needed
+        borderRadius: '20px',
         textTransform: 'none',
         '&:hover': {
-            backgroundColor: '#0D47A1', // Darker shade on hover
+            backgroundColor: '#0D47A1',
         },
     };
-
-
-    
 
     const handleLoginClick = () => {
         setLoading(true);
         axios.post('/signup')
             .then(response => {
                 console.log("Login successful");
-                const login_result = response.data.login_result;
-                console.log(login_result);
-                setLoggedIn(true);
-                setMessage('Your account with email address ' + login_result[0] + ' has logged in.');
+                const result = response.data.signup_result;
+                console.log(result);
+                setLoginResult(result);
+                setMessage('Your account with email address ' + result[0] + ' has logged in.');
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -60,7 +58,7 @@ export default function LoginPage() {
                 <CircularProgress />
             ) : (
                 <>
-                    {!loggedIn ? (
+                    {!loginResult ? (
                         <Button variant="contained" onClick={handleLoginClick} sx={{ mb: 2 }} style={buttonStyle}>
                             Login with Google
                         </Button>

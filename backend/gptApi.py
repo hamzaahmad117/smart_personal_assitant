@@ -59,6 +59,11 @@ def create_calendar_entry(assistantReply):
         creds=Credentials.from_authorized_user_file("token.json")
              
     try:
+        print("reply from assistant: ")
+        print(assistantReply)
+
+        if assistantReply == 'None.':
+            return None
         service=build("calendar","v3", credentials=creds)
         
         event_name = assistantReply["eventName"]
