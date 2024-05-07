@@ -1,0 +1,147 @@
+import { useState, useEffect } from 'react';
+import { Dialog, styled, Typography, Box, InputBase, TextField, Button, CircularProgress } from '@mui/material'; 
+import { Close, DeleteOutline, Reply } from '@mui/icons-material';
+import axios from 'axios';
+
+const dialogStyle = {
+    height: '90%',
+    width: '80%',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    boxShadow: 'none',
+    borderRadius: '10px 10px 0 0',
+}
+
+const Header = styled(Box)`
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: #f2f6fc;
+    & > p {
+        font-size: 14px;
+        font-weight: 500;
+    }
+`;
+
+const RecipientWrapper = styled(Box)`
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px;
+    & > div {
+        font-size: 14px;
+        border-bottom: 1px solid #F5F5F5;
+        margin-top: 10px;
+    }
+`;
+
+const Footer = styled(Box)`
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    align-items: center;
+`;
+
+const SendButton = styled(Button)`
+    background: #0B57D0;
+    color: #fff;
+    font-weight: 500;
+    text-transform: none;
+    border-radius: 18px;
+    width: 100px;
+`;
+
+const PlaceholderBox = styled(Box)`
+    height: 70px; /* Adjust height as needed */
+`;
+
+const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
+    const [data, setData] = useState({
+        to: recipient || '',
+        subject: '',
+        body: '', // Initialize body with an empty string
+    });
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (response) {
+            setData({
+                ...data,
+                body: response || '', // Set the response in the email body field
+            });
+        }
+    }, [response]);
+
+    const onValueChange = (e) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
+
+    const sendEmail = async (e) => {
+        e.preventDefault();
+
+        if (!data.to || !data.subject || !data.body) {
+            setError('Recipients, Subject, or Email Body cannot be empty.');
+            return;
+        }
+
+        setError('');
+
+        try {
+            const response = await axios.post('http://localhost:5000/send', data);
+            console.log('Response from Flask:', response.data);
+
+            setOpenDrawer(false);
+            setData({});
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    }
+
+    const closeComposeMail = () => {
+        setOpenDrawer(false);
+    }
+
+    return (
+        <Dialog
+            open={open}
+            PaperProps={{ sx: dialogStyle }}
+        >
+            <Header>
+                <Typography>New Message</Typography>
+                <Close fontSize="small" onClick={closeComposeMail} />
+            </Header>
+            <RecipientWrapper>
+                <InputBase placeholder='Recipients' name="to" onChange={onValueChange} value={data.to} />
+                <InputBase placeholder='Subject' name="subject" onChange={onValueChange} value={data.subject} />
+            </RecipientWrapper>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <TextField 
+                    multiline
+                    rows={18}
+                    sx={{ '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
+                    name="body"
+                    onChange={onValueChange}
+                    value={data.body}
+                />
+            )}
+            {error && (
+                <Typography color="error" sx={{ paddingLeft: '15px', fontSize: '12px' }}>
+                    {error}
+                </Typography>
+            )}
+            {loading ? (
+                <PlaceholderBox />
+            ) : (
+                <Footer>
+                    <SendButton onClick={sendEmail}>Send</SendButton>
+                    <DeleteOutline onClick={closeComposeMail} />
+                </Footer>
+            )}
+        </Dialog>
+    )
+}
+
+export default ComposeMail;
