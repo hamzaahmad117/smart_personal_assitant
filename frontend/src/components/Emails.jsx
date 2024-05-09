@@ -32,28 +32,24 @@ const Emails = () => {
         try {
 
             console.log('route Called')
-            var email_bodies = [];
 
             for(let i = 0; i < emails.length; i++) {
                 // console.log(emails[i].body)
-                email_bodies.push(emails[i].body);
-            }
-            // Assuming your backend endpoint for creating calendar entries is 'create-calendar-entries'
-            const response = await axios.post('http://localhost:5000/create-calendar-entries', {
-                emails: email_bodies // Pass only the first five emails
+                const response = await axios.post('http://localhost:5000/calendar-entry', {
+                email: emails[i].body
             });
             console.log(response.data);
-
-            var events = response.data.filter(event => event !== null);
-
             
-            
-            dispatch({ type: 'ADD_EVENTS', payload: events });
+            if (response.data !== 'None') {
+                dispatch({ type: 'ADD_EVENT', payload: response.data });
+                // alert('A new Calendar Entry was Created.')
+            } else {
+                // alert('NO Calendar Event was detected.')
+            }
+            }
 
-            // Assuming your addEvents function updates the global state with new events
-            // addEvents(response.data);
         } catch (error) {
-            console.error('Error creating calendar entries:', error);
+            console.error('Error creating calendar entry:', error);
         }
     };
 
