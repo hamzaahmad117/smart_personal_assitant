@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
-from simplegmail import Gmail
-from auth import Signup
+from flask import Flask, request, jsonify, send_file
+from simplegmail import Gmail, query
+from auth import Signup, getAttachment
 from flask_cors import CORS
 from simplegmail.query import construct_query
 from emailHandle import create_message_json
 from gptApi import responseGeneration, extractEvent, create_calendar_entry
+import io
+
 
 
 app = Flask(__name__)
@@ -40,12 +42,18 @@ def send_email():
     data = request.json
     print('Received data from React app:', data)
     
-
+    
     # Perform any necessary operations with the received data
     gmail = Gmail()
+    try:
+        with open("currentuser.txt", "r") as file:
+            user_email = file.read().strip()  # Read the email address and strip any leading/trailing whitespace
+    except FileNotFoundError:
+        print("Current user file not found.")
+        
     params = {
   "to": data['to'],
-  "sender": data['from'],
+  "sender": user_email,
   "subject": data['subject'],
   "msg_html": "<p>"+data['body']+"</p>",
   "msg_plain": data['body'],
@@ -96,7 +104,22 @@ def get_emails():
     else:
         return {}
 
+@app.route('/download_attachment', methods=['POST'])
+def download_attachment():
+    data = request.json
+    # print(data)
+    filepath = data['att_name']
+    attachment_data = getAttachment(data['msg_id'], data['att_id'])
+    
+    
+    
+    return send_file(
+        io.BytesIO(attachment_data),
+        download_name=data['att_name'],  # Provide a filename for the attachment
+        as_attachment=True
+    )
 
+    
 
 @app.route('/get-email-html', methods=['GET'])
 def get_email_html():
@@ -108,7 +131,7 @@ def get_email_html():
     }
     # Get unread messages in your inbox
     # messages = gmail.get_messages(query=construct_query(query_params))
-    messages = gmail.get_messages()
+    messages = gmail.get_messages(include_spam_trash=True)
 
     # Check if there are any unread messages
     if messages:

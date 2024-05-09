@@ -1,4 +1,6 @@
-import { Suspense, lazy, useState, useEffect } from 'react';
+// App.js
+import React from 'react';
+import { Suspense, lazy } from 'react';
 import { Navigate, Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { routes } from "./routes/routes";
 import SuspenseLoader from './components/common/SuspenseLoader';
@@ -28,14 +30,6 @@ const router = createBrowserRouter(
 )
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Implement your authentication logic here, for example, checking if the user is logged in
-    const isAuthenticated = true;
-    setAuthenticated(isAuthenticated);
-  }, []);
-
   return (
     <Suspense fallback={<SuspenseLoader />}>
       <DataProvider>

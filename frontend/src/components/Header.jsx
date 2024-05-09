@@ -1,14 +1,22 @@
-import { AppBar, Toolbar, Box, InputBase, styled } from '@mui/material';
-import { Menu as MenuIcon, Tune, HelpOutlineOutlined, SettingsOutlined, 
-    AppsOutlined, AccountCircleOutlined, Search, CalendarMonth as CalendarMonthIcon, Attachment } from '@mui/icons-material'
+import { AppBar, Toolbar, Box, InputBase, styled, Typography, Tooltip } from '@mui/material';
+import { Menu as MenuIcon, Tune, AccountCircleOutlined, Search, CalendarMonth as CalendarMonthIcon, Attachment } from '@mui/icons-material'
 import EmailIcon from '@mui/icons-material/Email';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../routes/routes';
 
 const StyledEmailIcon= styled(EmailIcon)`
-    margin-left: 100px; /* Adjust the padding as needed */
+    margin-left: 10px; /* Adjust the padding as needed */
     font-size: 32px;
-    
+    padding-right: 80px;
+    color: #153448;
+`;
+
+const AssistantText = styled(Typography)`
+    color: #333333; /* Dark gray color */
+     /* Adjust margin as needed */
+    margin-left: 40px;
+    font-weight: 600;
+    font-size: 18px;
 `;
 
 const StyledAppBar = styled(AppBar)`
@@ -22,7 +30,7 @@ const StyledAppBar = styled(AppBar)`
 
 const SearchWrapper = styled(Box)`
     background: #EAF1FB;
-    margin-left: 80px;
+    margin-left: 10px;
     border-radius: 8px;
     min-width: 690px;
     max-width: 720px;
@@ -34,7 +42,7 @@ const SearchWrapper = styled(Box)`
     & > div {
         width: 100%
     }
-`
+`;
 
 const OptionsWrapper = styled(Box)`
     width: 100%;
@@ -49,11 +57,9 @@ const OptionsWrapper = styled(Box)`
         color: #0B57D0; /* Change color on hover */
         cursor: pointer; /* Add pointer cursor on hover */
     }
-`
-
+`;
 
 const Header = ({ toggleDrawer }) => {
-
     const navigate = useNavigate();
     const handleCalendarClick = () => {
         navigate(routes.calendar.path)
@@ -61,23 +67,29 @@ const Header = ({ toggleDrawer }) => {
     const handleAttachClick = () => {
         navigate(routes.attachment.path)
     }
+
+    const handleAccountClick = () => {
+        window.location.href = 'http://localhost:3000/login';
+    }
+
     return (
         <StyledAppBar position="static">
             <Toolbar>
                 <MenuIcon color="action" onClick={toggleDrawer} />
-                <StyledEmailIcon color='action'/>
+                <AssistantText variant="subtitle1">Assistant</AssistantText>
+                <StyledEmailIcon />
                 <SearchWrapper>
-                    <Search color="action" />
+                    <Search color="action" style={{paddingRight: '7px'}} />
                     <InputBase placeholder='Search Mail'/>
                     <Tune  color="action"/>
                 </SearchWrapper>
 
                 <OptionsWrapper>
-                    <CalendarMonthIcon color="action" onClick={handleCalendarClick}/>
-                    <Attachment color="action" onClick={handleAttachClick}/>
-                    <SettingsOutlined color="action" />
-                    <AppsOutlined color="action" />
-                    <AccountCircleOutlined color="action" />
+                    <Tooltip title='Open Calendar View'><CalendarMonthIcon color="action" onClick={handleCalendarClick}/></Tooltip>
+                    <Tooltip title='Open Attachments View'><Attachment color="action" onClick={handleAttachClick}/></Tooltip>
+                    {/* <SettingsOutlined color="action" />
+                    <AppsOutlined color="action" /> */}
+                    <Tooltip title='Log Out'><AccountCircleOutlined color="action" onClick={handleAccountClick}/></Tooltip>
                </OptionsWrapper>
             </Toolbar>
         </StyledAppBar>

@@ -31,9 +31,11 @@ const Emails = () => {
             try {
                 const response = await axios.get('http://localhost:5000/get-email-html');
                 console.log(response.data);
+
                 setEmailsReceived({ type: 'SET_EMAILS_RECEIVED', payload: response.data });
                 setLoading(false); // Set loading to false when response is received
-                console.log(emailsReceived.attachments);
+                // console.log(emailsReceived.attachments);
+                
             } catch (error) {
                 console.error('Error fetching email HTML:', error);
             }

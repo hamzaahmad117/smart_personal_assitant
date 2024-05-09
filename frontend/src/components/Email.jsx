@@ -2,21 +2,23 @@ import { ListItem, Checkbox, Typography, Box, styled } from "@mui/material";
 import { StarBorder, Star } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes/routes";
-import axios from "axios";
-
 const Wrapper = styled(ListItem)`
     padding: 0 0 0 10px;
     background: #f2f6fc;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* Add transition effect */
+    border-bottom: 1px solid #ccc; /* Add bottom border */
+    &:hover {
+        background-color: #e3e9f2; /* Change background color on hover */
+    }
     & > div {
         display: flex;
-        width: 100%
+        width: 100%;
     }
     & > div > p {
         font-size: 14px;
     }
 `;
-
 const Indicator = styled(Typography)`
     font-size: 12px !important;
     background: #ddd;
@@ -35,18 +37,11 @@ const Date = styled(Typography)({
 
 const Email = ({ email /*, setStarredEmail, selectedEmails, setSelectedEmails */}) => {
     const navigate = useNavigate();
-    
+
+    const isUnread = email.type && email.type.includes('UNREAD');
+
     const handleEmailClick = async () => {
-        console.log(email.body)
-        // try {
-        //     const response = await axios.post('http://localhost:5000/response', {
-        //         body: email.body
-        //     });
-        //     console.log(response.data);
-        //     // Handle response here
-        // } catch (error) {
-        //     console.error('Error posting response:', error);
-        // }
+        navigate(routes.view.path, { state: { email: email }})
     }
 
     return (
@@ -58,22 +53,25 @@ const Email = ({ email /*, setStarredEmail, selectedEmails, setSelectedEmails */
                 : 
                     <StarBorder fontSize="small" style={{ marginRight: 10 }} /> 
             }
-            <Box onClick={() => navigate(routes.view.path, { state: { email: email }})}>
-                <Typography style={{ width: 200, whiteSpace: 'nowrap', 
+            <Box>
+                <Typography style={{ width: 200, whiteSpace: 'nowrap', fontWeight: isUnread ? '600' : 'normal',
         overflow: 'hidden', 
         textOverflow: 'ellipsis'  }}>{email.sender.split('@')[0]}</Typography>
                 <Indicator>Mail</Indicator>
                 <Typography 
     style={{ 
-        width: 800, 
+        width: 830, 
         whiteSpace: 'nowrap', 
         overflow: 'hidden', 
         textOverflow: 'ellipsis' 
     }}
 >
-    {email.subject} {email.body && '-'} {email.snippet}
+    <Typography style={{fontWeight: isUnread ? '600' : 'normal', fontSize: '14px', display: 'inline'}}>
+        {email.subject}
+    </Typography> 
+    {email.snippet && ' -'} {email.snippet}
 </Typography>
-                <Date>
+                <Date style={{fontWeight: isUnread ? '600' : 'normal', color: isUnread ? '#000' : '#5F6368'}}>
                     {(new window.Date(email.date)).getDate()}&nbsp;
                     {(new window.Date(email.date)).toLocaleString('default', { month: 'long' })}
                 </Date>

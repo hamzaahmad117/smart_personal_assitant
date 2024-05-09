@@ -16,11 +16,21 @@ const dialogStyle = {
 const Header = styled(Box)`
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Align items vertically */
     padding: 10px 15px;
     background: #f2f6fc;
     & > p {
         font-size: 14px;
         font-weight: 500;
+    }
+`;
+
+const CloseButton = styled(Close)`
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Add transition effect on color change */
+    &:hover {
+        color: #ff0000; /* Change color on hover */
     }
 `;
 
@@ -49,8 +59,11 @@ const SendButton = styled(Button)`
     text-transform: none;
     border-radius: 18px;
     width: 100px;
+    &:hover {
+        background: #0e69f0; /* Change background color on hover */
+        color: #fff; /* Change text color on hover */
+    }
 `;
-
 const PlaceholderBox = styled(Box)`
     height: 70px; /* Adjust height as needed */
 `;
@@ -81,18 +94,21 @@ const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
 
     const sendEmail = async (e) => {
         e.preventDefault();
-        console.log(loginResult)
+        console.log(loginResult);
         if (!data.to || !data.subject || !data.body) {
             setError('Recipients, Subject, or Email Body cannot be empty.');
             return;
         }
-
+    
         setError('');
-
+    
+        // Format the email body as HTML with paragraph tags
+        const bodyHTML = data.body.split('\n').map(line => `<p>${line}</p>`).join('');
+    
         try {
-            const response = await axios.post('http://localhost:5000/send', data);
+            const response = await axios.post('http://localhost:5000/send', { ...data, body: bodyHTML });
             console.log('Response from Flask:', response.data);
-
+    
             setOpenDrawer(false);
             setData({ // Only clear the fields that need to be cleared
                 ...data,
@@ -116,7 +132,7 @@ const ComposeMail = ({ open, setOpenDrawer, recipient, response, loading }) => {
         >
             <Header>
                 <Typography>New Message</Typography>
-                <Close fontSize="small" onClick={closeComposeMail} />
+                <CloseButton fontSize="small" onClick={closeComposeMail} />
             </Header>
             <RecipientWrapper>
                 <InputBase placeholder='Recipients' name="to" onChange={onValueChange} value={data.to} />

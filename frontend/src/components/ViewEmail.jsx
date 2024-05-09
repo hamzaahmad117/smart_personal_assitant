@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Box, Typography, IconButton, Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
@@ -8,9 +8,20 @@ import axios from 'axios';
 import { emptyProfilePic } from '../constants/constant';
 import { useEventContext } from '../context/EventsContext'; // Import the useEventsContext hook
 import { useOutletContext } from "react-router-dom";
+
 const IconWrapper = styled(Box)`
     padding: 15px;
     position: relative;
+`;
+
+const BackButton = styled(ArrowBack)`
+    font-size: 20px;
+    color: #333333;
+    transition: color 0.3s ease;
+    &:hover {
+        color: #0B57D0;
+        cursor: pointer; /* Add pointer cursor on hover */
+    }
 `;
 
 const ReplyButton = styled(IconButton)`
@@ -18,7 +29,7 @@ const ReplyButton = styled(IconButton)`
     top: 60px;
     right: 100px;
     &:hover {
-        color: '#0B57D0';
+        color: #0B57D0;
     }
 `;
 
@@ -27,7 +38,7 @@ const CalendarButton = styled(IconButton)`
     top: 60px;
     right: 60px;
     &:hover {
-        color: '#0B57D0';
+        color: #0B57D0;
     }
 `;
 
@@ -74,6 +85,10 @@ const DateText = styled(Typography)`
 `;
 
 const ViewEmail = () => {
+    useEffect(() => {
+        // Scroll to the top of the page when the component mounts
+        window.scrollTo(0, 0);
+    }, []);
     const { openDrawer } = useOutletContext();
 
     const { state } = useLocation();
@@ -130,7 +145,7 @@ const ViewEmail = () => {
     return (
         <Box style={openDrawer ? { marginLeft: 250, width: '100%', paddingTop: 64 } : { width: '100%', paddingTop: 64 }}>
             <IconWrapper>
-                <ArrowBack fontSize='small' color="action" onClick={() => window.history.back() } />
+                <BackButton onClick={() => window.history.back() } />
                 <Delete fontSize='small' color="action" style={{ marginLeft: 40 }} />
                 <Tooltip title="Generate automated reply">
                     <ReplyButton onClick={() => handleReply(email)}>
@@ -143,7 +158,14 @@ const ViewEmail = () => {
                     </CalendarButton>
                 </Tooltip>
             </IconWrapper>
-            <Subject>{email.subject} <Indicator component="span">Inbox</Indicator></Subject>
+            <Subject style={{ 
+                width: 1000, 
+                whiteSpace: 'wrap', 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis' 
+            }}>
+                {email.subject} <Indicator component="span">Mail</Indicator>
+            </Subject>
             <Box style={{ display: 'flex' }}>
                 <Image src={emptyProfilePic} alt="profile" />
                 <Container>
@@ -156,7 +178,20 @@ const ViewEmail = () => {
                             {(new Date(email.date)).toLocaleDateString()} 
                         </DateText>
                     </Box>
-                    <Typography style={{ marginTop: 20 }} ><div dangerouslySetInnerHTML={{ __html: email.html }}></div></Typography>
+                    <Typography style={{ marginTop: 20 }} >
+                        <div dangerouslySetInnerHTML={{ __html: email.html }}></div>
+                        {/* Display attachments if available */}
+                        {email.attachment && email.attachment.length > 0 && (
+                            <Box style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px', marginRight: '60px' }}>
+                                <Typography variant="subtitle1">Attachments:</Typography>
+                                <ul>
+                                    {email.attachment.map((attachment, index) => (
+                                        <li key={index}>{attachment[2]}</li>
+                                    ))}
+                                </ul>
+                            </Box>
+                        )}
+                    </Typography>
                 </Container>
             </Box>
             <ComposeMail open={openComposeMail} setOpenDrawer={setOpenComposeMail} recipient={email.senderEmailAddress} response={reply} loading={loading} />

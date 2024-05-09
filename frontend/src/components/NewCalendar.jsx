@@ -6,6 +6,10 @@ import { Calendar, Whisper, Popover, Badge } from "rsuite";
 import "../styles/styles.css";
 import "../styles/calendar.css";
 
+const StyledContainer = styled.div`
+  padding: 10px;
+`;
+
 const StyledCalendar = styled(Calendar)`
   .calendar-todo-list {
     text-align: left;
@@ -40,7 +44,6 @@ const NewCalendar = ({ events }) => {
     });
 
     if (filteredEvents.length) {
-      const moreCount = filteredEvents.length - 2;
       const moreItem = (
         <li>
           <Whisper
@@ -79,7 +82,11 @@ const NewCalendar = ({ events }) => {
     return null;
   }
 
-  return <StyledCalendar bordered renderCell={getTodoList} />;
+  return (
+    <StyledContainer>
+      <StyledCalendar bordered renderCell={getTodoList} />
+    </StyledContainer>
+  );
 };
 
 export default NewCalendar;

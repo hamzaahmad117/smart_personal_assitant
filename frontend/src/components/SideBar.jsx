@@ -3,6 +3,7 @@ import { Drawer, styled } from "@mui/material";
 
 import SideBarContent from "./SideBarContent";
 
+
 const StyledDrawer = styled(Drawer)`
     margin-top: 54px;
 `

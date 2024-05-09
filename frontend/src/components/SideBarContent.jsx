@@ -33,9 +33,7 @@ const ComposeButton = styled(Button)`
 `
 
 const SideBarContent = () => {
-
     const [openDrawer, setOpenDrawer] = useState(false);
-
     const { type } = useParams();
 
     const onComposeClick = () => {
@@ -44,24 +42,29 @@ const SideBarContent = () => {
 
     return (
         <Container>
-            <ComposeButton onClick={() => onComposeClick()}>
+            <ComposeButton onClick={onComposeClick} style={{ marginLeft: 30 }}>
                 <CreateOutlined style={{ marginRight: 10 }} />Compose
             </ComposeButton>
             <List>
-                {
-                    SIDEBAR_DATA.map(data => (
-                        <NavLink key={data.name} to={`${routes.emails.path}/${data.name}`}>
-                            <ListItem style={ type === data.name.toLowerCase() ? {
+                {SIDEBAR_DATA.map(data => (
+                    <NavLink key={data.name} to={`${routes.emails.path}/${data.name}`}>
+                        <ListItem
+                            style={type === data.name.toLowerCase() ? {
                                 backgroundColor: '#d3e3fd',
-                                borderRadius: '0 16px 16px 0'
-                            } : {}}><data.icon fontSize="small" />{data.title}</ListItem>
-                        </NavLink>
-                    ))
-                }
+                                borderRadius: '0 16px 16px 0',
+                                fontFamily: 'Poppins, sans-serif'
+                            } : { fontFamily: 'Poppins, sans-serif' }}
+                            sx={{ '&:hover': { backgroundColor: '#f0f0f0', cursor: 'pointer' } }}
+                        >
+                            <data.icon fontSize="small" />
+                            {data.title}
+                        </ListItem>
+                    </NavLink>
+                ))}
             </List>
             <ComposeMail open={openDrawer} setOpenDrawer={setOpenDrawer} />
         </Container>
-    )
+    );
 }
 
 export default SideBarContent;

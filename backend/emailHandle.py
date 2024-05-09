@@ -1,4 +1,6 @@
+import os
 def extract_sender_info(email_string):
+
     # Split the string by '<' and '>' to separate the sender name and email address
     parts = email_string.split('<')
     
@@ -30,7 +32,7 @@ print("Sender Email Address:", sender_email_address)  # Output: no-reply@announc
 def create_message_json(message):
     sender, sender_email_address = extract_sender_info(message.sender)
     label_ids = [label.id for label in message.label_ids]  # Convert Label objects to their IDs
-    attachments = [[attachment.user_id,attachment.id,attachment.filename, attachment.filetype] for attachment in message.attachments]
+    attachments = [[attachment.user_id,attachment.id,attachment.filename,os.path.splitext(attachment.filename)[1], attachment.filetype, attachment.msg_id] for attachment in message.attachments]
     message_json = {
         'to': message.recipient,
         'from': message.sender,

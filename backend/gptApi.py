@@ -40,6 +40,7 @@ def extractEvent(email_body):
         )
 
     assistantReply = response.choices[0].message.content
+
     
     if assistantReply != 'None.':
         assistantReply = json.loads(assistantReply)
