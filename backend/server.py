@@ -4,7 +4,7 @@ from auth import Signup, getAttachment
 from flask_cors import CORS
 from simplegmail.query import construct_query
 from emailHandle import create_message_json
-from gptApi import responseGeneration, extractEvent, create_calendar_entry
+from gptApi import responseGeneration, extractEvent, create_calendar_entry, extract_events
 import io
 
 
@@ -84,6 +84,13 @@ def calendar_entry():
         print('response is none.')
         return 'None'
     return response
+@app.route('/create-calendar-entries', methods = ['POST'])
+def create_entries():
+    data = request.json
+    # print(data)
+    entries = extract_events(data['emails'])
+    return jsonify(entries)
+
 
 @app.route('/get-emails', methods=['GET'])
 def get_emails():

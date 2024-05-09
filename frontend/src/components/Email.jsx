@@ -39,6 +39,7 @@ const Email = ({ email /*, setStarredEmail, selectedEmails, setSelectedEmails */
     const navigate = useNavigate();
 
     const isUnread = email.type && email.type.includes('UNREAD');
+    const hasAttachment = email.attachment.length > 0;
 
     const handleEmailClick = async () => {
         navigate(routes.view.path, { state: { email: email }})
@@ -54,13 +55,13 @@ const Email = ({ email /*, setStarredEmail, selectedEmails, setSelectedEmails */
                     <StarBorder fontSize="small" style={{ marginRight: 10 }} /> 
             }
             <Box>
-                <Typography style={{ width: 200, whiteSpace: 'nowrap', fontWeight: isUnread ? '600' : 'normal',
+                <Typography style={{ width: 190, whiteSpace: 'nowrap', fontWeight: isUnread ? '600' : 'normal',
         overflow: 'hidden', 
-        textOverflow: 'ellipsis'  }}>{email.sender.split('@')[0]}</Typography>
-                <Indicator>Mail</Indicator>
+        textOverflow: 'ellipsis'  }}>{ email.sender.split('@')[0]}</Typography>
+                <Indicator>Mail{hasAttachment ? '/Att' : ''}</Indicator>
                 <Typography 
     style={{ 
-        width: 830, 
+        width: 800, 
         whiteSpace: 'nowrap', 
         overflow: 'hidden', 
         textOverflow: 'ellipsis' 

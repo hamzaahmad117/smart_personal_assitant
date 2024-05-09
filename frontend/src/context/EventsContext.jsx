@@ -8,18 +8,44 @@ const initialState = {
 // Create context
 const EventContext = createContext();
 
+// Define action types
+const SET_EVENTS = "SET_EVENTS";
+const ADD_EVENT = "ADD_EVENT";
+const ADD_EVENTS = "ADD_EVENTS";
+
+// Define action creators
+const setEvents = (events) => ({
+  type: SET_EVENTS,
+  payload: events,
+});
+
+const addEvent = (event) => ({
+  type: ADD_EVENT,
+  payload: event,
+});
+
+const addEvents = (events) => ({
+  type: ADD_EVENTS,
+  payload: events,
+});
+
 // Define reducer function
 const eventReducer = (state, action) => {
   switch (action.type) {
-    case "SET_EVENTS":
+    case SET_EVENTS:
       return {
         ...state,
-        events: action.payload, // Set events array to the payload
+        events: action.payload,
       };
-    case "ADD_EVENT":
+    case ADD_EVENT:
       return {
         ...state,
-        events: [...state.events, action.payload], // Add new event to the events array
+        events: [...state.events, action.payload],
+      };
+    case ADD_EVENTS:
+      return {
+        ...state,
+        events: [...state.events, ...action.payload],
       };
     default:
       return state;
@@ -39,3 +65,5 @@ export const EventProvider = ({ children }) => {
 
 // Custom hook to use event context
 export const useEventContext = () => useContext(EventContext);
+
+export { setEvents, addEvent, addEvents };

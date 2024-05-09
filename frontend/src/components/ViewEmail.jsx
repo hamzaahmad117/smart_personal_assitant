@@ -170,16 +170,17 @@ const ViewEmail = () => {
                 <Image src={emptyProfilePic} alt="profile" />
                 <Container>
                     <Box>
-                        <Typography>
-                            {email.sender}
-                            <Box component="span">&nbsp;&#60;{email.senderEmailAddress}&#62;</Box>
-                        </Typography>
+                    <Typography>
+    {email.type.includes('SENT') ? "To: " + email.to : email.sender}
+    <Box component="span">&nbsp;&#60;{email.senderEmailAddress}&#62;</Box>
+</Typography>
                         <DateText>
                             {(new Date(email.date)).toLocaleDateString()} 
                         </DateText>
                     </Box>
-                    <Typography style={{ marginTop: 20 }} >
-                        <div dangerouslySetInnerHTML={{ __html: email.html }}></div>
+                    <Typography style={{ marginTop: 20, fontSize: 14,    overflowWrap: 'break-word', width: openDrawer ? 1000 : 1300/* Update this line */
+}} >
+                        <div style={{ borderBottom: '1px solid #ccc'}} dangerouslySetInnerHTML={{ __html: email.html }}></div>
                         {/* Display attachments if available */}
                         {email.attachment && email.attachment.length > 0 && (
                             <Box style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px', marginRight: '60px' }}>

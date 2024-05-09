@@ -7,6 +7,8 @@ from googleapiclient.discovery import build
 from datetime import datetime, timedelta
 from google.oauth2.credentials import Credentials
 import os
+from simplegmail import Gmail
+import time
 
 def responseGeneration(body):
     API_KEY= open("API_KEY","r").read()
@@ -26,7 +28,13 @@ def responseGeneration(body):
     return json.dumps(json_response)
 
 
-
+def extract_events(emails):
+    entries = []
+    for email in emails:
+        entries.append(extractEvent(email))
+        time.sleep(1)
+    return entries
+ # Also if someone has said \"You can meet me in my office at 12:00\", try to make an event.
 def extractEvent(email_body):
     API_KEY= open("API_KEY","r").read()
     openai.api_key=API_KEY
@@ -105,6 +113,17 @@ def create_calendar_entry(assistantReply):
         print("An error occured: ",error)
     return event1
 
+
+# gmail = Gmail()
+
+# messages = gmail.get_unread_inbox()
+# messages = messages[:5]
+# email_bodies = []
+# for message in messages:
+#     email_bodies.append(message.plain)
+
+# entries = extract_events(email_bodies)
+# print(entries)
 # Open the file in read mode
 # with open('./text.txt', 'r') as file:
 #     # Read the content of the file

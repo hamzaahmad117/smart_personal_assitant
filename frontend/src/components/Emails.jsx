@@ -9,12 +9,15 @@ import NoMails from './common/NoMails';
 import { EMPTY_TABS } from '../constants/constant';
 import axios from 'axios';
 import { useEmailContext } from '../context/EmailContext';
+import { useEventContext } from '../context/EventsContext'; // Import the useEventsContext hook
+
 
 const Emails = () => {
     const { openDrawer } = useOutletContext();
     const { type } = useParams();
     const { emailsReceived, setEmailsReceived } = useEmailContext();
     const [loading, setLoading] = useState(true);
+    const { dispatch } = useEventContext(); // Get dispatch function from the events context
 
     
 
@@ -25,6 +28,35 @@ const Emails = () => {
     const deleteSelectedEmails = () => {
         // Your deleteSelectedEmails logic
     }
+    const createCalendarEntries = async (emails) => {
+        try {
+
+            console.log('route Called')
+            var email_bodies = [];
+
+            for(let i = 0; i < emails.length; i++) {
+                // console.log(emails[i].body)
+                email_bodies.push(emails[i].body);
+            }
+            // Assuming your backend endpoint for creating calendar entries is 'create-calendar-entries'
+            const response = await axios.post('http://localhost:5000/create-calendar-entries', {
+                emails: email_bodies // Pass only the first five emails
+            });
+            console.log(response.data);
+
+            var events = response.data.filter(event => event !== null);
+
+            
+            
+            dispatch({ type: 'ADD_EVENTS', payload: events });
+
+            // Assuming your addEvents function updates the global state with new events
+            // addEvents(response.data);
+        } catch (error) {
+            console.error('Error creating calendar entries:', error);
+        }
+    };
+
 
     useEffect(() => {
         const callEmailService = async () => {
@@ -35,7 +67,8 @@ const Emails = () => {
                 setEmailsReceived({ type: 'SET_EMAILS_RECEIVED', payload: response.data });
                 setLoading(false); // Set loading to false when response is received
                 // console.log(emailsReceived.attachments);
-                
+                createCalendarEntries(response.data.slice(0,4))
+
             } catch (error) {
                 console.error('Error fetching email HTML:', error);
             }
@@ -46,6 +79,7 @@ const Emails = () => {
             callEmailService();
         } else {
             setLoading(false); // Set loading to false if emails are already fetched
+            // createCalendarEntries(emailsReceived.slice(0,3))
         }
     }, []);
 
